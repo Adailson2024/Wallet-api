@@ -1,14 +1,14 @@
 import { Router } from 'express';
-import { validarToken } from '../middleswares/usuarios-middles.js';
+import { validarToken } from '../middlewares/usuarios-middles.js';
 import { deletarTransacoes, getTransacoes, getTransacoesPorId, criarTransacoes, alterarTransacoes } from '../controllers//transacoes-controllers.js';
-import { transacaoSchema } from '../schemas/transacoes-schemas.js';
-import { validarSchema } from '../middleswares/schema-middles.js';
+import { transactionSchema } from '../schemas/transaction-schemas.js';
+import { validarSchema } from '../middlewares/schema-middles.js';
 const transacoesRouter = Router();
 transacoesRouter.use(validarToken);
-transacoesRouter.get('/transacoes', getTransacoes);
-transacoesRouter.get('/transacoes/:id',getTransacoesPorId);
-transacoesRouter.post('/transacoes',validarSchema(transacaoSchema),criarTransacoes);
-transacoesRouter.delete("/transacoes/:id", deletarTransacoes);
-transacoesRouter.put("/transacoes/:id",validarSchema(transacaoSchema), alterarTransacoes);
+transacoesRouter.get('/transaction', getTransacoes);
+transacoesRouter.get('/transaction/:id',getTransacoesPorId);
+transacoesRouter.post('/transaction',validarSchema(transactionSchema),criarTransacoes);
+transacoesRouter.delete("/transaction/:id", deletarTransacoes);
+transacoesRouter.put("/transaction/:id",validarSchema(transactionSchema), alterarTransacoes);
 
 export default transacoesRouter;

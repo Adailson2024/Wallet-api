@@ -7,7 +7,7 @@ export async function getTransacoes(req, res){
   const limite = 2;
   const inicio = (pagina - 1)*limite;
   try{
-    const transacoes = await db.collection("transacoes")
+    const transacoes = await db.collection("transaction")
     .find()
     .skip(inicio)
     .limit(limite)
@@ -22,30 +22,30 @@ export async function getTransacoesPorId(req,res){
    const id=req.params.id;
    
    try {
-   const transacao = await db.collection("transacoes").findOne({
+   const transaction = await db.collection("transaction").findOne({
   _id:new ObjectId(id)
    });
-   if(!transacao) return res.status(404).send("transacao não encontrada!");
-   return res.send(transacao)
+   if(!transaction) return res.status(404).send("transaction não encontrada!");
+   return res.send(transaction)
    }catch(err){
    res.status(500).send(err.message);
    }
 };
 export async function criarTransacoes(req,res){
-  const transacao=req.body;
+  const transaction=req.body;
   
   
   try{
-  const transacaoExistente=
-  await db.collection("transacoes").findOne({titulo:transacao.titulo});
-  if(transacaoExistente){
-    return res.status(409).send("transacao com este título já cadastrada")
+  const transactionExistente=
+  await db.collection("transaction").findOne({titulo:transaction.titulo});
+  if(transactionExistente){
+    return res.status(409).send("transaction com este título já cadastrada")
   }
-  await db.collection("transacoes").insertOne({
-    ...transacao,
+  await db.collection("transaction").insertOne({
+    ...transaction,
   user: res.locals.user._id
   });
-    res.status(201).send("Sua transacao foi adicionada com sucesso!")
+    res.status(201).send("Sua transaction foi adicionada com sucesso!")
   } 
   catch(err){
     res.status(404).send(err.message)
@@ -55,14 +55,14 @@ export async function deletarTransacoes(req, res){
   const {id}=req.params;
     try {
          
-        const resultado = await db.collection("transacoes").deleteOne({
+        const resultado = await db.collection("transaction").deleteOne({
             _id: new ObjectId(id)
         });
 
         if (resultado.deletedCount === 0) {
-            return res.status(404).send("Essa transacao não existe"); // not found
+            return res.status(404).send("Essa transaction não existe"); // not found
         }
-        return res.status(204).send("transacao foi deletada com sucesso!");
+        return res.status(204).send("transaction foi deletada com sucesso!");
     } catch (err) {
         return res.status(500).send(err.message);
     }
@@ -70,32 +70,32 @@ export async function deletarTransacoes(req, res){
 
 export async function alterarTransacoes(req, res){
     const { id } = req.params;
-    const transacao = req.body;
+    const transaction = req.body;
 
     
   try{
 
-    const transacaoExistente = await db.collection("transacoes").findOne({
-    titulo: transacao.titulo,
+    const transactionExistente = await db.collection("transaction").findOne({
+    titulo: transaction.titulo,
 });
 
-      if(transacaoExistente ){
-    return res.status(409).send("transacao com este título já cadastrada!");
+      if(transactionExistente ){
+    return res.status(409).send("transaction com este título já cadastrada!");
      }
     
-   const resultadoUpdate=await db.collection("transacoes").updateOne(
+   const resultadoUpdate=await db.collection("transaction").updateOne(
         { _id: new ObjectId(id) },
         {
         $set: {
-          titulo:transacao.titulo,
-          ingredientes:transacao.ingredientes,
-          preparo:transacao.preparo
+          titulo:transaction.titulo,
+          ingredientes:transaction.ingredientes,
+          preparo:transaction.preparo
         }
 });
 if(resultadoUpdate.matchedCount===0){
-  return res.status(404).send("Essa transacao não existe!");
+  return res.status(404).send("Essa transaction não existe!");
 }
- res.send("transacao atualizada!")
+ res.send("transaction atualizada!")
   }
   catch(err){
      return res.status(500).send(err.message);
