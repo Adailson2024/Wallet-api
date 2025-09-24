@@ -3,9 +3,16 @@ import { db } from "../config/database.js";
 
 
 export async function getTransacoes(req, res){
-  const pagina = req.query.pagina || 1;
-  const limite = 2;
-  const inicio = (pagina - 1)*limite;
+  const page = req.query.page || 1;
+  page = Number(page); 
+  if (isNaN(page) || !Number.isInteger(page) || page <= 0) {
+    
+    return res.status(400).send({
+        mensagem: "O parâmetro 'page' deve ser um número inteiro positivo (ex: 1, 2, 3)."
+    });
+  }
+  const limite = 10;
+  const inicio = (page - 1)*limite;
   try{
     const transacoes = await db.collection("transaction")
     .find()
@@ -37,7 +44,7 @@ export async function criarTransacoes(req,res){
   
   try{
   const transactionExistente=
-  await db.collection("transaction").findOne({titulo:transaction.titulo});
+  await db.collection("transaction").findOne({value:transaction.value});
   if(transactionExistente){
     return res.status(409).send("transaction com este título já cadastrada")
   }
@@ -76,7 +83,7 @@ export async function alterarTransacoes(req, res){
   try{
 
     const transactionExistente = await db.collection("transaction").findOne({
-    titulo: transaction.titulo,
+    value: transaction.value,
 });
 
       if(transactionExistente ){
@@ -87,9 +94,9 @@ export async function alterarTransacoes(req, res){
         { _id: new ObjectId(id) },
         {
         $set: {
-          titulo:transaction.titulo,
-          ingredientes:transaction.ingredientes,
-          preparo:transaction.preparo
+          value:transaction.value,
+          description:transaction.description,
+          type:transaction.type
         }
 });
 if(resultadoUpdate.matchedCount===0){
