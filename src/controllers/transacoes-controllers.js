@@ -3,7 +3,7 @@ import { db } from "../config/database.js";
 
 
 export async function getTransacoes(req, res){
-  const page = req.query.page || 1;
+  let page = req.query.page || 1;
   page = Number(page); 
   if (isNaN(page) || !Number.isInteger(page) || page <= 0) {
     
@@ -15,7 +15,7 @@ export async function getTransacoes(req, res){
   const inicio = (page - 1)*limite;
   try{
     const transacoes = await db.collection("transaction")
-    .find()
+    .find({user:res.locals.user._id})
     .skip(inicio)
     .limit(limite)
     .toArray()
@@ -30,7 +30,8 @@ export async function getTransacoesPorId(req,res){
    
    try {
    const transaction = await db.collection("transaction").findOne({
-  _id:new ObjectId(id)
+  _id:new ObjectId(id),
+  user: res.locals.user._id
    });
    if(!transaction) return res.status(404).send("transaction não encontrada!");
    return res.send(transaction)
@@ -43,14 +44,11 @@ export async function criarTransacoes(req,res){
   
   
   try{
-  const transactionExistente=
-  await db.collection("transaction").findOne({value:transaction.value});
-  if(transactionExistente){
-    return res.status(409).send("transaction com este título já cadastrada")
-  }
+  
   await db.collection("transaction").insertOne({
     ...transaction,
-  user: res.locals.user._id
+  user: res.locals.user._id,
+  createdAt:new Date()
   });
     res.status(201).send("Sua transaction foi adicionada com sucesso!")
   } 
@@ -63,7 +61,8 @@ export async function deletarTransacoes(req, res){
     try {
          
         const resultado = await db.collection("transaction").deleteOne({
-            _id: new ObjectId(id)
+            _id: new ObjectId(id),
+            user: res.locals.user._id
         });
 
         if (resultado.deletedCount === 0) {
@@ -84,6 +83,7 @@ export async function alterarTransacoes(req, res){
 
     const transactionExistente = await db.collection("transaction").findOne({
     value: transaction.value,
+    user: res.locals.user._id
 });
 
       if(transactionExistente ){
