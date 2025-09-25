@@ -45,7 +45,7 @@ if(usuarioCadastrado && bcrypt.compareSync(usuario.password,usuarioCadastrado.pa
   
   return res.status(200).send(token);
 }
-  return res.status(401).send("Email e password incompatíveis!");
+  return res.status(401).send("Email e senha incompatíveis!");
 }catch(error){
 return res.status(500).send(error.message);  
 }

@@ -33,7 +33,7 @@ export async function getTransacoesPorId(req,res){
   _id:new ObjectId(id),
   user: res.locals.user._id
    });
-   if(!transaction) return res.status(404).send("transaction não encontrada!");
+   if(!transaction) return res.status(404).send("Transação não encontrada!");
    return res.send(transaction)
    }catch(err){
    res.status(500).send(err.message);
@@ -50,7 +50,7 @@ export async function criarTransacoes(req,res){
   user: res.locals.user._id,
   createdAt:new Date()
   });
-    res.status(201).send("Sua transaction foi adicionada com sucesso!")
+    res.status(201).send("Sua transação foi adicionada com sucesso!")
   } 
   catch(err){
     res.status(404).send(err.message)
@@ -66,9 +66,9 @@ export async function deletarTransacoes(req, res){
         });
 
         if (resultado.deletedCount === 0) {
-            return res.status(404).send("Essa transaction não existe"); // not found
+            return res.status(404).send("Essa transação não existe"); // not found
         }
-        return res.status(204).send("transaction foi deletada com sucesso!");
+        return res.status(204).send("Transação deletada com sucesso!");
     } catch (err) {
         return res.status(500).send(err.message);
     }
@@ -93,9 +93,9 @@ export async function alterarTransacoes(req, res){
         }
 });
 if(resultadoUpdate.matchedCount===0){
-  return res.status(404).send("Essa transaction não existe!");
+  return res.status(404).send("Essa transação não existe!");
 }
- res.send("transaction atualizada!")
+ res.send("Transação atualizada!")
   }
   catch(err){
      return res.status(500).send(err.message);
