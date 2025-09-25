@@ -81,14 +81,7 @@ export async function alterarTransacoes(req, res){
     
   try{
 
-    const transactionExistente = await db.collection("transaction").findOne({
-    value: transaction.value,
-    user: res.locals.user._id
-});
-
-      if(transactionExistente ){
-    return res.status(409).send("transaction com este título já cadastrada!");
-     }
+    
     
    const resultadoUpdate=await db.collection("transaction").updateOne(
         { _id: new ObjectId(id) },
